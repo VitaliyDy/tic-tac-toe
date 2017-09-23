@@ -1,18 +1,14 @@
 class TicTacToe {    
     constructor() {
         this.turnCount = 0;
-        this.firstSymbol = 'x';      
-        this.secondSymbol = 'o';    
-        this.currentSymbol = this.firstSymbol;  
         this.marksStorage = [[],[],[]];        
-        this.resultArr = []; 
-        this.winner = null;      
+        this.resultArr = [];   
     }
     /**
      * depending on the turnCount return certain symbol
      */
     getCurrentPlayerSymbol() {
-        return this.currentSymbol = (this.turnCount%2 === 0) ?  this.firstSymbol : this.secondSymbol;
+        return this.turnCount%2 === 0 ?  'x' : 'o';
     }
 
     /**
@@ -29,7 +25,7 @@ class TicTacToe {
             this.marksStorage[rowIndex][columnIndex] = this.getCurrentPlayerSymbol();
             this.turnCount ++;
         }
-        this.resultArr = this.transformToResultsArr(this.marksStorage);  
+        return this.resultArr = transformToResultsArr(this.marksStorage);  
     }
 
     /**
@@ -40,22 +36,12 @@ class TicTacToe {
     }
 
     /**
-     * c check all symbols in each full line to be equal firstSymbol or secondSymbol
+     * check all symbols in each full line to be equal firstSymbol or secondSymbol
      * and change currentSymbol accordingly
      */
     getWinner() {
-
-        for(let i = 0; i < this.resultArr.length; i++){
-
-            if(this.resultArr[i].join('').length === 3){
-                if(this.resultArr[i].every((x) => x === 'o'))
-                   return this.winner =  this.secondSymbol;        
-                             
-                if(this.resultArr[i].every((x) => x === 'x'))
-                   return this.winner =  this.firstSymbol;
-            } 
-        }        
-        return this.winner;
+        let tempArr = this.resultArr.filter(filterArrforWinner);       
+        return tempArr.length ? tempArr[0][0] : null;
     }
 
     /**
@@ -82,15 +68,20 @@ class TicTacToe {
     getFieldValue(rowIndex, colIndex) {
         return this.marksStorage[rowIndex][colIndex] || null;
     }
+   
+}
 
-    /**
+module.exports = TicTacToe;
+
+ /**
      * method for transformation marksStorage[] into array of lines variants for easy scan and check
      * @param {*string[[]]} array 
      */
-    transformToResultsArr(array) {        
+    function transformToResultsArr(array) {        
         let transformedArr=[],
             tempArr=[];
         //push all colls from array into transformedArr using tempArray
+        
         for(let i = 0; i < array.length; i++ ){ 
             tempArr = []; 
             for(let j = 0; j< array.length; j++){              
@@ -100,7 +91,7 @@ class TicTacToe {
         }
          //push all rows from array into transformedArr 
          //push diagonal(left-top-> right-bottom) from array into transformedArr using tempArray
-         tempArr = [];
+        tempArr = [];
         for(let i = 0; i < array.length; i++ ){           
             transformedArr.push(array[i])
             tempArr.push(array[i][i]); 
@@ -115,6 +106,8 @@ class TicTacToe {
 
         return transformedArr;
     }
-}
 
-module.exports = TicTacToe;
+    function filterArrforWinner(array) {
+        if(array.join('').length === 3)
+            return array.every((x) => x === 'o') || array.every((x) => x === 'x')
+    }
